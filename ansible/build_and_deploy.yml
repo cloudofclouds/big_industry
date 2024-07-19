@@ -1,6 +1,6 @@
 ---
 - name: Compile and build Docker container
-  hosts: all
+  hosts: localhost
   become: yes
   vars:
     docker_image_name: "your-image-name"
