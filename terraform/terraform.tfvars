@@ -1,0 +1,6 @@
+aws_access_key         = ""
+aws_secret_key         = ""
+key_name               = "deployer-key"
+public_key_path        = "~/.ssh/id_rsa.pub"
+ssh_private_key_path   = "~/.ssh/id_rsa"
+my_ip                  = "70.249.171.46/32"
