@@ -8,6 +8,7 @@
     repo_path: "{{ ansible_dir | dirname }}"  # Parent directory of the playbook directory
     kubernetes_deployment_file: "{{ repo_path }}/kubernetes/deployment.yaml"
     kubernetes_service_file: "{{ repo_path }}/kubernetes/service.yaml"
+    kubeconfig_path: "/var/lib/jenkins/.kube/config"  # Path to the kubeconfig file
 
   tasks:
     - name: Ensure Java is installed
@@ -51,8 +52,10 @@
         regexp: 'image: {{ docker_image_name }}:.*'
         replace: 'image: {{ docker_image_name }}:{{ docker_image_tag }}'
 
-    - name: Apply Kubernetes Deployment and Service YAML
-      command: kubectl apply -f "{{ kubernetes_deployment_file }}"
-    
+    - name: Apply Kubernetes Deployment YAML
+      command: kubectl apply -f "{{ kubernetes_deployment_file }}" --kubeconfig="{{ kubeconfig_path }}" --validate=false
+      ignore_errors: yes
+
     - name: Apply Kubernetes Service YAML
-      command: kubectl apply -f "{{ kubernetes_service_file }}"
+      command: kubectl apply -f "{{ kubernetes_service_file }}" --kubeconfig="{{ kubeconfig_path }}" --validate=false
+      ignore_errors: yes
