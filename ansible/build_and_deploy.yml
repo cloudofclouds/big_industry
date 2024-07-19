@@ -38,13 +38,6 @@
       set_fact:
         docker_image_tag: "{{ git_commit_sha.stdout }}"
 
-    - name: Add Jenkins user to Docker group (if running as Jenkins)
-      user:
-        name: jenkins
-        groups: docker
-        append: yes
-      when: ansible_user == 'jenkins'
-
     - name: Build the Docker image
       command: docker build -t {{ docker_image_name }}:{{ docker_image_tag }} .
       args:
