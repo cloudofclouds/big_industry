@@ -28,11 +28,6 @@
       args:
         chdir: "{{ repo_path }}"
 
-    - name: Ensure Docker is installed
-      apt:
-        name: docker.io
-        state: present
-
     - name: Get the short Git commit SHA
       command: git rev-parse --short HEAD
       args:
