@@ -1,0 +1,56 @@
+---
+- name: Compile and build Docker container
+  hosts: all
+  become: yes
+  vars:
+    docker_image_name: "your-image-name"
+    ansible_dir: "{{ playbook_dir }}"  # Directory where the playbook is located
+    repo_path: "{{ ansible_dir | dirname }}"  # Parent directory of the playbook directory
+
+  tasks:
+    - name: Ensure Java is installed
+      apt:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Ensure Maven is installed
+      apt:
+        name: maven
+        state: present
+
+    - name: Compile the project with Maven
+      command: mvn compile
+      args:
+        chdir: "{{ repo_path }}"
+
+    - name: Package the project with Maven
+      command: mvn package
+      args:
+        chdir: "{{ repo_path }}"
+
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Get the short Git commit SHA
+      command: git rev-parse --short HEAD
+      args:
+        chdir: "{{ repo_path }}"
+      register: git_commit_sha
+
+    - name: Set Docker image tag based on commit SHA
+      set_fact:
+        docker_image_tag: "{{ git_commit_sha.stdout }}"
+
+    - name: Add Jenkins user to Docker group (if running as Jenkins)
+      user:
+        name: jenkins
+        groups: docker
+        append: yes
+      when: ansible_user == 'jenkins'
+
+    - name: Build the Docker image
+      command: docker build -t {{ docker_image_name }}:{{ docker_image_tag }} .
+      args:
+        chdir: "{{ repo_path }}"
