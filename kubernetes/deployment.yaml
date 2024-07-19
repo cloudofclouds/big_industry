@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: big-industry-deployment
+  labels:
+    app: big-industry
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: big-industry
+  template:
+    metadata:
+      labels:
+        app: big-industry
+    spec:
+      containers:
+      - name: big-industry-container
+        image: big_industry:<commit_sha>
+        ports:
+        - containerPort: 8080
+        env:
+        - name: JAVA_OPTS
+          value: "-Djava.awt.headless=true"
