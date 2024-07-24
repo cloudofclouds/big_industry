@@ -3,7 +3,7 @@
   hosts: localhost
   become: yes
   vars:
-    docker_registry_url: "localhost:5000"
+    docker_registry_url: "533267177356.dkr.ecr.us-west-2.amazonaws.com"
     docker_image_name: "big_industry"
     ansible_dir: "{{ playbook_dir }}"  # Directory where the playbook is located
     repo_path: "{{ ansible_dir | dirname }}"  # Parent directory of the playbook directory
