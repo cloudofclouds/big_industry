@@ -3,6 +3,7 @@
   hosts: localhost
   become: yes
   vars:
+    docker_registry_url: "localhost:5000"
     docker_image_name: "big_industry"
     ansible_dir: "{{ playbook_dir }}"  # Directory where the playbook is located
     repo_path: "{{ ansible_dir | dirname }}"  # Parent directory of the playbook directory
@@ -42,7 +43,7 @@
         docker_image_tag: "{{ git_commit_sha.stdout }}"
 
     - name: Build the Docker image
-      command: docker build -t {{ docker_image_name }}:{{ docker_image_tag }} .
+      command: docker build -t {{ docker_registry_url}}/{{ docker_image_name }}:{{ docker_image_tag }} .
       args:
         chdir: "{{ repo_path }}"
 
@@ -50,7 +51,7 @@
       replace:
         path: "{{ kubernetes_deployment_file }}"
         regexp: 'image: {{ docker_image_name }}:.*'
-        replace: 'image: {{ docker_image_name }}:{{ docker_image_tag }}'
+        replace: 'image: {{ docker_registry_url}}/{{ docker_image_name }}:{{ docker_image_tag }}'
 
     - name: Apply Kubernetes Deployment YAML
       command: kubectl apply -f "{{ kubernetes_deployment_file }}" --kubeconfig="{{ kubeconfig_path }}" --validate=false
