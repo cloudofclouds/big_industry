@@ -47,6 +47,11 @@
       args:
         chdir: "{{ repo_path }}"
 
+    - name: Push Docker Image
+      command: docker push {{ docker_registry_url}}/{{ docker_image_name }}:{{ docker_image_tag }}
+      args:
+        chdir: "{{ repo_path }}"
+
     - name: Update Deployment YAML with Docker image tag
       replace:
         path: "{{ kubernetes_deployment_file }}"
