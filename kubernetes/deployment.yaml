@@ -22,3 +22,5 @@ spec:
         env:
         - name: JAVA_OPTS
           value: "-Djava.awt.headless=true"
+      imagePullSecrets:
+      - name: ecr-secret
