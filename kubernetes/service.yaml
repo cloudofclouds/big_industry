@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: big-industry-service
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: big-industry
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
+      nodePort: 30000
