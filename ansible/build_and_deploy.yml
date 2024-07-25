@@ -43,12 +43,17 @@
         docker_image_tag: "{{ git_commit_sha.stdout }}"
 
     - name: Build the Docker image
-      command: docker build -t {{ docker_registry_url}}/{{ docker_image_name }}:{{ docker_image_tag }} .
+      command: docker build -t {{ docker_registry_url }}/{{ docker_image_name }}:{{ docker_image_tag }} .
+      args:
+        chdir: "{{ repo_path }}"
+
+    - name: login to docker registry
+      command: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin {{ docker_registry_url }}
       args:
         chdir: "{{ repo_path }}"
 
     - name: Push Docker Image
-      command: docker push {{ docker_registry_url}}/{{ docker_image_name }}:{{ docker_image_tag }}
+      command: docker push {{ docker_registry_url }}/{{ docker_image_name }}:{{ docker_image_tag }}
       args:
         chdir: "{{ repo_path }}"
 
@@ -56,7 +61,7 @@
       replace:
         path: "{{ kubernetes_deployment_file }}"
         regexp: 'image: {{ docker_image_name }}:.*'
-        replace: 'image: {{ docker_registry_url}}/{{ docker_image_name }}:{{ docker_image_tag }}'
+        replace: 'image: {{ docker_registry_url }}/{{ docker_image_name }}:{{ docker_image_tag }}'
 
     - name: Apply Kubernetes Deployment YAML
       command: kubectl apply -f "{{ kubernetes_deployment_file }}" --kubeconfig="{{ kubeconfig_path }}" --validate=false
