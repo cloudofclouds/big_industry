@@ -52,6 +52,10 @@
         aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin {{ docker_registry_url }}
       args:
         chdir: "{{ repo_path }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+        AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
 
     - name: Push Docker Image
       command: docker push {{ docker_registry_url }}/{{ docker_image_name }}:{{ docker_image_tag }}
