@@ -47,8 +47,9 @@
       args:
         chdir: "{{ repo_path }}"
 
-    - name: login to docker registry
-      command: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin {{ docker_registry_url }}
+    - name: Login to Docker registry
+      shell: |
+        aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin {{ docker_registry_url }}
       args:
         chdir: "{{ repo_path }}"
 
